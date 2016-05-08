@@ -3,78 +3,85 @@ using System.Runtime.InteropServices;
 using System;
 using System.Text;
 
-/// <summary>
-/// EnumDesktopWindows Demo - shows the caption of all desktop windows.
-/// Authors: Svetlin Nakov, Martin Kulov 
-/// Bulgarian Association of Software Developers - http://www.devbg.org/en/
-/// </summary>
-public class user32
-{
-    /// <summary>
-    /// filter function
-    /// </summary>
-    /// <param name="hWnd"></param>
-    /// <param name="lParam"></param>
-    /// <returns></returns>
+
+public class user32{
+    public struct RECT{
+        public int Left;       // Specifies the x-coordinate of the upper-left corner of the rectangle.
+        public int Top;        // Specifies the y-coordinate of the upper-left corner of the rectangle.
+        public int Right;      // Specifies the x-coordinate of the lower-right corner of the rectangle.
+        public int Bottom;     // Specifies the y-coordinate of the lower-right corner of the rectangle.
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct WINDOWINFO{
+        public uint cbSize;
+        public RECT rcWindow;
+        public RECT rcClient;
+        public uint dwStyle;
+        public uint dwExStyle;
+        public uint dwWindowStatus;
+        public uint cxWindowBorders;
+        public uint cyWindowBorders;
+        public ushort atomWindowType;
+        public ushort wCreatorVersion;
+
+        public WINDOWINFO(Boolean? filler) : this() {
+            cbSize = (UInt32)(Marshal.SizeOf(typeof(WINDOWINFO)));
+        }
+
+    }
+
     public delegate bool EnumDelegate(IntPtr hWnd, int lParam);
 
-    /// <summary>
-    /// check if windows visible
-    /// </summary>
-    /// <param name="hWnd"></param>
-    /// <returns></returns>
     [DllImport("user32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static extern bool IsWindowVisible(IntPtr hWnd);
 
-    /// <summary>
-    /// return windows text
-    /// </summary>
-    /// <param name="hWnd"></param>
-    /// <param name="lpWindowText"></param>
-    /// <param name="nMaxCount"></param>
-    /// <returns></returns>
     [DllImport("user32.dll", EntryPoint = "GetWindowText",
     ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern int GetWindowText(IntPtr hWnd, StringBuilder lpWindowText, int nMaxCount);
 
-    /// <summary>
-    /// enumarator on all desktop windows
-    /// </summary>
-    /// <param name="hDesktop"></param>
-    /// <param name="lpEnumCallbackFunction"></param>
-    /// <param name="lParam"></param>
-    /// <returns></returns>
+    // [DllImport("user32.dll", SetLastError = true)]
+    // public static extern bool GetWindowInfo(IntPtr hWnd, out WINDOWINFO pwi);
+    [return: MarshalAs(UnmanagedType.Bool)]
+    [DllImport("user32.dll",SetLastError = true)]
+    public static extern bool GetWindowInfo(IntPtr hwnd, ref WINDOWINFO pwi);
+
+
     [DllImport("user32.dll", EntryPoint = "EnumDesktopWindows",
     ExactSpelling = false, CharSet = CharSet.Auto, SetLastError = true)]
     public static extern bool EnumDesktopWindows(IntPtr hDesktop, EnumDelegate lpEnumCallbackFunction, IntPtr lParam);
 
-    /// <summary>
-    /// entry point of the program
-    /// </summary>
-    static void Main()
-    {
-    var collection = new List<string>();
-    user32.EnumDelegate filter = delegate(IntPtr hWnd, int lParam)
-    {
-        StringBuilder strbTitle = new StringBuilder(255);
-        int nLength = user32.GetWindowText(hWnd, strbTitle, strbTitle.Capacity + 1);
-        string strTitle = strbTitle.ToString();
+    static void Main(){
+        var collection = new List<string>();
+        user32.EnumDelegate filter  = delegate(IntPtr hWnd, int lParam){
+            StringBuilder strbTitle = new StringBuilder(255);
+            int    nLength  = user32.GetWindowText(hWnd, strbTitle, strbTitle.Capacity + 1);
+            string strTitle = strbTitle.ToString();
+            // Get Window Info
+            // WINDOWINFO structure: https://msdn.microsoft.com/en-us/library/ms632610(VS.85).aspx
+            // RECT structure      : https://msdn.microsoft.com/en-us/library/dd162897(v=vs.85).aspx
+            WINDOWINFO info = new WINDOWINFO();
+            info.cbSize = (uint)Marshal.SizeOf(info);
+            user32.GetWindowInfo(hWnd, ref info);
 
-        if (user32.IsWindowVisible(hWnd) && string.IsNullOrEmpty(strTitle) == false)
-        {
-        collection.Add(strTitle);
-        }
-        return true;
-    };
+            Console.WriteLine("rcWindow.left: {0}, rcWindow.right: {0} ", info.rcWindow.Left, info.rcWindow.Right);
+            Console.WriteLine("rcWindow.top: {0}, rcWindow.bottom: {0} ", info.rcWindow.Top, info.rcWindow.Bottom);
 
-    if (user32.EnumDesktopWindows(IntPtr.Zero, filter, IntPtr.Zero))
-    {
-        foreach (var item in collection)
-        {
-        Console.WriteLine(item);
+            Console.WriteLine("rcClient.left: {0}, rcClient.right: {0} ", info.rcClient.Left, info.rcClient.Right);
+            Console.WriteLine("rcClient.top: {0}, rcClient.bottom: {0} ", info.rcClient.Top, info.rcClient.Bottom);
+
+            if (user32.IsWindowVisible(hWnd) && string.IsNullOrEmpty(strTitle) == false){
+                collection.Add(strTitle);
+            }
+            return true;
+        };
+
+        if (user32.EnumDesktopWindows(IntPtr.Zero, filter, IntPtr.Zero)){
+            foreach (var item in collection){
+                Console.WriteLine(item);
+            }
         }
-    }
-    Console.Read();
+        Console.Read();
     }
 }
