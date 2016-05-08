@@ -58,20 +58,21 @@ public class user32{
             StringBuilder strbTitle = new StringBuilder(255);
             int    nLength  = user32.GetWindowText(hWnd, strbTitle, strbTitle.Capacity + 1);
             string strTitle = strbTitle.ToString();
-            // Get Window Info
-            // WINDOWINFO structure: https://msdn.microsoft.com/en-us/library/ms632610(VS.85).aspx
-            // RECT structure      : https://msdn.microsoft.com/en-us/library/dd162897(v=vs.85).aspx
-            WINDOWINFO info = new WINDOWINFO();
-            info.cbSize = (uint)Marshal.SizeOf(info);
-            user32.GetWindowInfo(hWnd, ref info);
-
-            Console.WriteLine("rcWindow.left: {0}, rcWindow.right: {0} ", info.rcWindow.Left, info.rcWindow.Right);
-            Console.WriteLine("rcWindow.top: {0}, rcWindow.bottom: {0} ", info.rcWindow.Top, info.rcWindow.Bottom);
-
-            Console.WriteLine("rcClient.left: {0}, rcClient.right: {0} ", info.rcClient.Left, info.rcClient.Right);
-            Console.WriteLine("rcClient.top: {0}, rcClient.bottom: {0} ", info.rcClient.Top, info.rcClient.Bottom);
 
             if (user32.IsWindowVisible(hWnd) && string.IsNullOrEmpty(strTitle) == false){
+                // Get Window Info
+                // WINDOWINFO structure: https://msdn.microsoft.com/en-us/library/ms632610(VS.85).aspx
+                // RECT structure      : https://msdn.microsoft.com/en-us/library/dd162897(v=vs.85).aspx
+                WINDOWINFO info = new WINDOWINFO();
+                info.cbSize = (uint)Marshal.SizeOf(info);
+                user32.GetWindowInfo(hWnd, ref info);
+
+                Console.WriteLine("rcWindow.left: {0}, rcWindow.right: {0} ", info.rcWindow.Left, info.rcWindow.Right);
+                Console.WriteLine("rcWindow.top: {0}, rcWindow.bottom: {0} ", info.rcWindow.Top, info.rcWindow.Bottom);
+
+                Console.WriteLine("rcClient.left: {0}, rcClient.right: {0} ", info.rcClient.Left, info.rcClient.Right);
+                Console.WriteLine("rcClient.top: {0}, rcClient.bottom: {0} ", info.rcClient.Top, info.rcClient.Bottom);
+                
                 collection.Add(strTitle);
             }
             return true;
