@@ -3,6 +3,10 @@ using System.Runtime.InteropServices;
 using System;
 using System.Text;
 
+// TODO:
+//      1.  Capture Screen
+//      2.  Record the screen (Full-Screen)
+//      3.  Record screen by window
 
 public class user32{
     public struct RECT{
@@ -72,7 +76,7 @@ public class user32{
 
                 Console.WriteLine("rcClient.left: {0}, rcClient.right: {0} ", info.rcClient.Left, info.rcClient.Right);
                 Console.WriteLine("rcClient.top: {0}, rcClient.bottom: {0} ", info.rcClient.Top, info.rcClient.Bottom);
-                
+
                 collection.Add(strTitle);
             }
             return true;
