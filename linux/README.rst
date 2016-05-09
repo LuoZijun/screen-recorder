@@ -14,6 +14,17 @@ GNU/Linux 系统屏幕录制
 **未开始**
 
 
+编译
+--------
+
+.. code:: bash
+
+    cargo build
+    ./target/debug/screen-record
+    # or
+    # cargo run
+
+
 参考
 --------
 
