@@ -5,7 +5,7 @@ Windows屏幕录像
 .. contents::
 
 
-..NOTE::
+.. NOTE::
 	
 	考虑到 `Rust-lang` 语言有了完整的 对 `Windows API` 封装过的 Lib, 
 	似乎可以考虑使用 `Rustlang` 来取代 `C#` 做开发。
