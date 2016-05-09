@@ -8,6 +8,10 @@ using System.Text;
 //      2.  Record the screen (Full-Screen)
 //      3.  Record screen by window
 
+// 录像代码参考:
+//      http://stackoverflow.com/questions/4068414/how-to-capture-screen-to-be-video-using-c-sharp-net
+
+
 public class user32{
     public struct RECT{
         public int Left;       // Specifies the x-coordinate of the upper-left corner of the rectangle.
