@@ -104,7 +104,7 @@ Python 调用 OC
 
 .. code:: python
 
-#!/usr/bin/python
+    #!/usr/bin/python
     
     import time
     import Quartz, AVFoundation as AVF
