@@ -41,6 +41,7 @@ Python 调用 OC
 
     import sys
     from Quartz import CGWindowListCopyWindowInfo, kCGWindowListExcludeDesktopElements, kCGNullWindowID
+    from Quartz import CGGetDisplaysWithRect, CGRect
     # from Foundation import NSSet, NSMutableSet
 
     reload(sys)
@@ -69,21 +70,32 @@ Python 调用 OC
             kCGWindowStoreType = 2;
         }
         """
-        windows = list(CGWindowListCopyWindowInfo(kCGWindowListExcludeDesktopElements, kCGNullWindowID))
-        result  = []
-        for window in windows:
-            window['kCGWindowBounds'] = dict(window['kCGWindowBounds'])
-            result.append(dict(window))
-            
-        windows = result
+        # windows = list(CGWindowListCopyWindowInfo(kCGWindowListExcludeDesktopElements, kCGNullWindowID))
+        windows = filter(
+            lambda window: window['kCGWindowLayer'] == 0 and window['kCGWindowStoreType'] == 1, 
+            list(CGWindowListCopyWindowInfo(kCGWindowListExcludeDesktopElements, kCGNullWindowID))
+        )
+        for i in range(len(windows)):
+            windows[i]['kCGWindowBounds'] = dict(windows[i]['kCGWindowBounds'])
+            # windowRect = windows[i]['kCGWindowBounds']
+            # rect = (
+            #     str(int(windowRect['X'])), str(int(windowRect['Y'])), 
+            #     str(int(windowRect['Width'])), str(int(windowRect['Height'])),
+            # )
+            # Take one picture at window rect
+            # import subprocess, time
+            # for n in range(25*15):
+            #     cmd = ["screencapture", "-R", ",".join(rect),"-t", "png", "tmp%d.png"%n]
+            #     r = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=False, stderr=None)
+            #     time.sleep(0.04)
 
         for window in windows:
-                if window['kCGWindowLayer'] == 0:
-                    for k,v in window.items():
-                        print k,"\t",v
-                    print "="*30
-
-
+            if window['kCGWindowLayer'] == 0:
+                for k,v in window.items():
+                    print k,"\t",v
+                print "="*30
+            else:
+                pass
 
 
 参考
