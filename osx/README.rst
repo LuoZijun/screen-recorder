@@ -34,6 +34,8 @@ OS X系统屏幕录像
 Python 调用 OC
 -------------------
 
+*   获取 Window List With Window Info ( 携带窗口位置和标题信息的窗口列表)
+
 .. code:: python
     
     #!/usr/bin/env python
@@ -96,6 +98,45 @@ Python 调用 OC
                 print "="*30
             else:
                 pass
+
+
+*   Python 调用 OS X AVFoundation 库对指定区域进行录像
+
+.. code:: python
+
+#!/usr/bin/python
+    
+    import time
+    import Quartz, AVFoundation as AVF
+
+    from Foundation import NSObject, NSURL
+    from Quartz import NSRect
+
+    def main():
+        # Full-Desktop
+        display_id = Quartz.CGMainDisplayID()
+
+        # display_id = 34207
+
+        session = AVF.AVCaptureSession.alloc().init()
+        # cropRect
+        screen_input = AVF.AVCaptureScreenInput.alloc()
+        screen_input.cropRect = NSRect((200, 200), (1000, 500))
+        screen_input.initWithDisplayID_(display_id)
+        
+        file_output = AVF.AVCaptureMovieFileOutput.alloc().init()
+
+        session.addInput_(screen_input)
+        session.addOutput_(file_output)
+        session.startRunning()
+
+        file_url = NSURL.fileURLWithPath_('foo.mov')
+        file_url = file_output.startRecordingToOutputFileURL_recordingDelegate_(file_url, NSObject.alloc().init())
+        time.sleep(10)
+        session.stopRunning()
+
+    if __name__ == '__main__':
+        main()
 
 
 参考
