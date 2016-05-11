@@ -7,15 +7,13 @@ extern crate image;
 extern crate screenshot;
 extern crate bmp;
 
+
+use image::{ImageBuffer};
+
 #[cfg(not(target_os = "linux"))]
 fn capture_frame (){
     let s = screenshot::get_screenshot(0).unwrap();
     println!("{} x {} x {} = {} bytes, Row Length: {}", s.height(), s.width(), s.pixel_width(), s.raw_len(), s.row_len() );
-    
-    // PNG Format
-    // image::save_buffer("test.png",
-    //     s.as_ref(), s.width() as u32, s.height() as u32, image::RGBA(8))
-    // .unwrap();
 
     let width  = s.width();
     let height = s.height();
@@ -58,6 +56,14 @@ fn capture_frame (){
     }
     im.save("test.bmp").unwrap();
     println!("Done.");
+
+    // PNG Format
+    // image::save_buffer("test.png",
+    //     s.as_ref(), s.width() as u32, s.height() as u32, image::RGBA(8))
+    // .unwrap();
+    // let img = ImageBuffer::new(pixels[0].len() as u32, pixels.len() as u32);
+    // let p   = img.get_pixel(100, 100);
+    // println!("PNG P: {:?}", p);
 }
 
 #[cfg(target_os = "linux")]
