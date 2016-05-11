@@ -64,6 +64,18 @@ fn capture_frame (){
     // let img = ImageBuffer::new(pixels[0].len() as u32, pixels.len() as u32);
     // let p   = img.get_pixel(100, 100);
     // println!("PNG P: {:?}", p);
+
+    // PNG Format (Python Code)
+    // from PIL import Image
+    // im = Image.new( "RGBA", (width, height), "black")
+    // for row in range(height):
+    //     for col in range(width):
+    //         b = pixels[row][col][0]
+    //         g = pixels[row][col][1]
+    //         r = pixels[row][col][2]
+    //         a = pixels[row][col][3]
+    //         im.putpixel((col, row),(r,g,b))
+    // im.save("test.png")
 }
 
 #[cfg(target_os = "linux")]
